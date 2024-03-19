@@ -27,7 +27,7 @@ class AircraftCubit extends Cubit<AircraftState> {
   final LocalStorage storage = LocalStorage('dronescanner');
   final OrnithologyRestClient ornithologyRestClient;
 
-  static const uiUpdateIntervalMs = 200;
+  static const uiUpdateIntervalMs = 100;
   static const _labelsKey = 'labels';
   static const _modelInfoKey = 'model_info';
 

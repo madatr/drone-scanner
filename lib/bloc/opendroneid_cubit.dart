@@ -1,4 +1,5 @@
 import 'dart:async';
+// import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_opendroneid/flutter_opendroneid.dart';
@@ -128,6 +129,10 @@ class OpendroneIdCubit extends Cubit<ScanningState> {
   }
 
   void scanCallback(MessageContainer pack) {
+    if (pack.authenticationMessage != null) {
+      // log("Madatr: External: apagenum: ${pack.authenticationMessage!.authPageNumber}");
+      // log("Madatr: External: fmessage: ${pack.authenticationMessage!.authData.toString()}");
+    }
     aircraftCubit.addPack(pack);
     if (mapCubit.state.lockOnPoint &&
         pack.macAddress == selectedAircraftCubit.state.selectedAircraftMac &&

@@ -10,6 +10,7 @@ import '../../../../bloc/sliders_cubit.dart';
 import '../../../../constants/sizes.dart';
 import '../../../../models/aircraft_model_info.dart';
 import '../../../showcase/showcase_item.dart';
+import 'aircraft_auth_field.dart';
 import 'basic_fields.dart';
 import 'connection_fields.dart';
 import 'location_fields.dart';
@@ -131,6 +132,7 @@ class _AircraftDetailState extends State<AircraftDetail> {
     final fetchInProgress = context
         .select<AircraftCubit, bool>((cubit) => cubit.state.fetchInProgress);
     return [
+      ...AuthFields.buildAuthFields(context, messagePackList),
       ...ConnectionFields.buildConnectionFields(context, messagePackList),
       ...BasicFields.buildBasicFields(
         context: context,

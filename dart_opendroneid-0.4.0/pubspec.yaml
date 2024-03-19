@@ -1,0 +1,23 @@
+name: dart_opendroneid
+description: A Dart library for parsing Remote ID advertisements from raw binary payload
+version: 0.4.0
+repository: https://github.com/dronetag/dart-opendroneid
+environment:
+  sdk: '>=3.0.2 <4.0.0'
+dependencies:
+  collection: ^1.17.1
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0
+  ffi: ^2.0.2
+  ffigen: ^8.0.2
+  path: ^1.8.3
+scripts:
+  test: 'docker build -t dart-opendroneid-test --target test --progress=plain .'
+ffigen:
+  output: 'test/opendroneid_core_library/generated_bindings.dart'
+  name: 'OpenDroneIDCore'
+  description: 'Bindings to opendroneid-core-c'
+  headers:
+    entry-points:
+      - 'test/opendroneid_core_library/opendroneid.h'

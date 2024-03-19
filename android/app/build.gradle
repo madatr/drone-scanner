@@ -48,8 +48,8 @@ android {
    
     defaultConfig {
         applicationId "cz.dronetag.dronescanner"
-        compileSdk 33
-        minSdkVersion 21
+        compileSdk 34
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

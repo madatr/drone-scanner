@@ -15,6 +15,7 @@ import '../../../utils/utils.dart';
 import '../common/refreshing_text.dart';
 import 'aircraft_card_custom_text.dart';
 import 'aircraft_card_title.dart';
+import 'detail/authenticator.dart';
 
 class AircraftCard extends StatelessWidget {
   final MessageContainer messagePack;
@@ -26,6 +27,8 @@ class AircraftCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var result = Authenticator.checkAuth([messagePack]);
+
     String? countryCode;
     if (messagePack.operatorIdMessage != null) {
       countryCode = getCountryCode(messagePack.operatorIdMessage!.operatorID);
@@ -62,10 +65,20 @@ class AircraftCard extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: buildLeading(context),
       trailing: buildTrailing(context),
-      title: AircraftCardTitle(
-        uasId: uasIdText,
-        givenLabel: givenLabel,
-      ),
+      title: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        AircraftCardTitle(
+          uasId: uasIdText,
+          givenLabel: givenLabel,
+        ),
+        const SizedBox(width: 5),
+        Icon(
+          result.verified
+              ? Icons.check_circle_outline_rounded
+              : Icons.error_outline_rounded,
+          color: result.verified ? Colors.green : Colors.red,
+          size: 17,
+        )
+      ]),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+// import 'package:drone_scanner/tester.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -85,78 +86,77 @@ void main() async {
       ));
 
   runAppWithSentry(
-    () => runApp(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider<StandardsCubit>(
-            create: (context) => StandardsCubit(),
-            lazy: false,
+    () => runApp(//MyApp()));
+        MultiBlocProvider(
+      providers: [
+        BlocProvider<StandardsCubit>(
+          create: (context) => StandardsCubit(),
+          lazy: false,
+        ),
+        BlocProvider<ScreenCubit>(
+          create: (context) => ScreenCubit(),
+          lazy: false,
+        ),
+        BlocProvider<SlidersCubit>(
+          create: (context) => SlidersCubit(),
+          lazy: false,
+        ),
+        BlocProvider<MapCubit>(
+          create: (context) => mapCubit,
+          lazy: false,
+        ),
+        BlocProvider<ShowcaseCubit>(
+          create: (context) => ShowcaseCubit(),
+          lazy: false,
+        ),
+        BlocProvider<ZonesCubit>(
+          create: (context) => ZonesCubit(),
+          lazy: false,
+        ),
+        BlocProvider<SelectedZoneCubit>(
+          create: (context) => SelectedZoneCubit(),
+          lazy: false,
+        ),
+        BlocProvider<AircraftCubit>(
+          create: (context) => aircraftCubit,
+          lazy: false,
+        ),
+        BlocProvider<ExportCubit>(
+          create: (context) => ExportCubit(aircraftCubit: aircraftCubit),
+          lazy: false,
+        ),
+        BlocProvider<AircraftExpirationCubit>(
+          create: (context) => aircraftExpirationCubit,
+          lazy: false,
+        ),
+        BlocProvider<ProximityAlertsCubit>(
+          create: (context) => proximityAlertsCubit,
+          lazy: false,
+        ),
+        BlocProvider<SelectedAircraftCubit>(
+          create: (context) => selectedCubit,
+          lazy: false,
+        ),
+        BlocProvider<OpendroneIdCubit>(
+          create: (context) => OpendroneIdCubit(
+            mapCubit: mapCubit,
+            selectedAircraftCubit: selectedCubit,
+            aircraftCubit: aircraftCubit,
           ),
-          BlocProvider<ScreenCubit>(
-            create: (context) => ScreenCubit(),
-            lazy: false,
+          lazy: false,
+        ),
+        BlocProvider<HelpCubit>(
+          create: (context) => HelpCubit(),
+          lazy: false,
+        ),
+        BlocProvider<GeocodingCubit>(
+          create: (context) => GeocodingCubit(
+            geocodingRestClient: NominatimGeocodingRestClient(),
           ),
-          BlocProvider<SlidersCubit>(
-            create: (context) => SlidersCubit(),
-            lazy: false,
-          ),
-          BlocProvider<MapCubit>(
-            create: (context) => mapCubit,
-            lazy: false,
-          ),
-          BlocProvider<ShowcaseCubit>(
-            create: (context) => ShowcaseCubit(),
-            lazy: false,
-          ),
-          BlocProvider<ZonesCubit>(
-            create: (context) => ZonesCubit(),
-            lazy: false,
-          ),
-          BlocProvider<SelectedZoneCubit>(
-            create: (context) => SelectedZoneCubit(),
-            lazy: false,
-          ),
-          BlocProvider<AircraftCubit>(
-            create: (context) => aircraftCubit,
-            lazy: false,
-          ),
-          BlocProvider<ExportCubit>(
-            create: (context) => ExportCubit(aircraftCubit: aircraftCubit),
-            lazy: false,
-          ),
-          BlocProvider<AircraftExpirationCubit>(
-            create: (context) => aircraftExpirationCubit,
-            lazy: false,
-          ),
-          BlocProvider<ProximityAlertsCubit>(
-            create: (context) => proximityAlertsCubit,
-            lazy: false,
-          ),
-          BlocProvider<SelectedAircraftCubit>(
-            create: (context) => selectedCubit,
-            lazy: false,
-          ),
-          BlocProvider<OpendroneIdCubit>(
-            create: (context) => OpendroneIdCubit(
-              mapCubit: mapCubit,
-              selectedAircraftCubit: selectedCubit,
-              aircraftCubit: aircraftCubit,
-            ),
-            lazy: false,
-          ),
-          BlocProvider<HelpCubit>(
-            create: (context) => HelpCubit(),
-            lazy: false,
-          ),
-          BlocProvider<GeocodingCubit>(
-            create: (context) => GeocodingCubit(
-              geocodingRestClient: NominatimGeocodingRestClient(),
-            ),
-            lazy: false,
-          ),
-        ],
-        child: App(),
-      ),
-    ),
+          lazy: false,
+        ),
+      ],
+      child: App(),
+    )),
   );
 }
