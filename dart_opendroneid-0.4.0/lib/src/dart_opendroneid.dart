@@ -60,6 +60,8 @@ T? parseODIDMessage<T extends ODIDMessage>(Uint8List messageData) {
         // log("MADATR: Internal: Page(${out!.authPageNumber})| data: ${out!.authData.toString()}");
 
         if (out!.authPageNumber == 0) {
+          log("Got auth message (0): ${DateTime.now().toIso8601String()}");
+
           // log("MADATR: Internal: Page 0 - clearing");
 
           authDataCombined.clear();

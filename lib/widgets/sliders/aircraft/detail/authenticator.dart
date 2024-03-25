@@ -1,3 +1,5 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -15,8 +17,22 @@ class AuthResult {
 }
 
 class Authenticator {
+  static int trials = 0;
+  static List<Duration> processingTimes = [];
+  static List<Duration> hashingTimes = [];
+  static List<Duration> verificationTimes = [];
+
+  static Duration calculateAverage(List<Duration> durations) {
+    if (durations.isEmpty) {
+      return Duration.zero;
+    }
+
+    var sum = durations.reduce((a, b) => a + b);
+    return Duration(milliseconds: sum.inMilliseconds ~/ durations.length);
+  }
+
   static String stringToHex(String text, int length) {
-    String hexString = text.runes
+    var hexString = text.runes
         .map((rune) => rune.toRadixString(16).padLeft(2, '0'))
         .join('');
 
@@ -46,7 +62,21 @@ class Authenticator {
   }
 
   static AuthResult checkAuth(List<MessageContainer> allMessages) {
-    AuthResult result = AuthResult(
+    if (trials > 100) {
+      var averageProcessingTime = calculateAverage(processingTimes);
+      var averageHashingTime = calculateAverage(hashingTimes);
+      var averageVerificationTime = calculateAverage(verificationTimes);
+
+      log('Average Processing Time: $averageProcessingTime');
+      log('Average Hashing Time: $averageHashingTime');
+      log('Average Verification Time: $averageVerificationTime');
+    }
+
+    Duration? pt;
+    Duration? ht;
+    Duration? vt;
+
+    var result = AuthResult(
         verified: false, verificationMessage: "Have not checked yet");
 
     var pubKeyHex = '';
@@ -54,6 +84,13 @@ class Authenticator {
     var operatorID = '';
     log("MADATR: checkAuth");
 
+    log("message Rx time: ${allMessages.last.lastUpdate.toIso8601String()}");
+    if (allMessages.last.afterProcess != null) {
+      log("message after processing time: ${allMessages.last.afterProcess!.toIso8601String()}");
+      pt = allMessages.last.afterProcess!
+          .difference(allMessages.last.lastUpdate);
+      log("Processing time: ${pt.inMicroseconds} μs");
+    }
     if (allMessages.last.authenticationMessage != null &&
         allMessages.last.operatorIdMessage != null) {
       var payload = allMessages.last.authenticationMessage!.authData.authData
@@ -74,7 +111,13 @@ class Authenticator {
           allMessages.last.operatorIdMessage!.operatorID, lengthOfHex);
       operatorID += "1000100"; // Terminating chars from cpp
 
+      var t1 = DateTime.now();
+
       var hashHex = hashHexString(operatorID);
+      var t2 = DateTime.now();
+
+      ht = t2.difference(t1);
+      log("Hashing time: ${ht.inMicroseconds} μs");
 
       // log("MADATR: Got Data");
 
@@ -95,6 +138,8 @@ class Authenticator {
       // log("----------------------------");
 
       // log("MADATR: operatorID: ${operatorID.toUpperCase()}");
+
+      t1 = DateTime.now();
 
       var ec = getP256();
       pubKeyHex = "04$pubKeyHex";
@@ -131,9 +176,23 @@ class Authenticator {
       bool vres;
       try {
         vres = verify(pubKey, hash, signature);
+
+        t2 = DateTime.now();
+        vt = t2.difference(t1);
+        log("Verification time: ${vt.inMicroseconds} μs");
+
         log(vres ? "Verified" : "Not verified");
         result.verified = true;
         result.verificationMessage = "-";
+
+        if (vres) {
+          log("Trial: $trials");
+          trials++;
+          hashingTimes.add(ht);
+          processingTimes.add(pt!);
+          verificationTimes.add((vt));
+        }
+
         return result;
       } on Exception catch (e) {
         log("MADATR: AUTH: Verification Error: ${e.toString()}");
