@@ -22,13 +22,17 @@ class Authenticator {
   static List<Duration> hashingTimes = [];
   static List<Duration> verificationTimes = [];
 
-  static Duration calculateAverage(List<Duration> durations) {
+  static double calculateAverage(List<Duration> durations) {
     if (durations.isEmpty) {
-      return Duration.zero;
+      return 0;
     }
-
-    var sum = durations.reduce((a, b) => a + b);
-    return Duration(milliseconds: sum.inMilliseconds ~/ durations.length);
+    int dl = durations.length;
+    int sum = 0;
+    durations.forEach((element) {
+      sum = sum + element.inMicroseconds;
+    });
+    log("Dividing: ${sum} / $dl");
+    return (sum) / dl;
   }
 
   static String stringToHex(String text, int length) {
@@ -62,7 +66,7 @@ class Authenticator {
   }
 
   static AuthResult checkAuth(List<MessageContainer> allMessages) {
-    if (trials > 100) {
+    if (trials > 20) {
       var averageProcessingTime = calculateAverage(processingTimes);
       var averageHashingTime = calculateAverage(hashingTimes);
       var averageVerificationTime = calculateAverage(verificationTimes);
