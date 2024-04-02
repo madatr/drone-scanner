@@ -31,11 +31,13 @@ class AuthFields {
     var averageProcessingTime = 0.0;
     var averageHashingTime = 0.0;
     var averageVerificationTime = 0.0;
+    var averageRxTime = 0.0;
 
     if (result.hashingTimes.length > 10) {
       averageProcessingTime = calculateAverage(result.processingTimes);
       averageHashingTime = calculateAverage(result.hashingTimes);
       averageVerificationTime = calculateAverage(result.verificationTimes);
+      averageRxTime = calculateAverage(result.rxTimes);
     }
 
     log("MADATR T: Verification result: ${result.verificationMessage}");
@@ -109,6 +111,7 @@ class AuthFields {
       result.hashingTimes.length > 10
           ? AircraftDetailField(
               headlineText: 'Average Processing Time',
+              numOfMes: result.processingTimes.length.toString(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,6 +129,7 @@ class AuthFields {
       result.hashingTimes.length > 10
           ? AircraftDetailField(
               headlineText: 'Average Hashing Time',
+              numOfMes: result.hashingTimes.length.toString(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,12 +147,32 @@ class AuthFields {
       result.hashingTimes.length > 10
           ? AircraftDetailField(
               headlineText: 'Average Verification Time',
+              numOfMes: result.verificationTimes.length.toString(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "${averageVerificationTime.toStringAsFixed(0)} μs  ≈  ${(averageVerificationTime / 1000).toStringAsFixed(0)} ms",
+                    style: const TextStyle(
+                      color: AppColors.detailFieldColor,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(),
+
+      result.hashingTimes.length > 10
+          ? AircraftDetailField(
+              headlineText: 'Average Time Rx Δ',
+              numOfMes: result.rxTimes.length.toString(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${averageRxTime.toStringAsFixed(0)} μs  ≈  ${(averageRxTime / 1000).toStringAsFixed(0)} ms",
                     style: const TextStyle(
                       color: AppColors.detailFieldColor,
                     ),

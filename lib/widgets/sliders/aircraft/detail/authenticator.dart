@@ -8,6 +8,7 @@ import 'package:ecdsa/ecdsa.dart';
 import 'package:elliptic/elliptic.dart';
 import 'package:flutter_opendroneid/extensions/list_extension.dart';
 import 'package:flutter_opendroneid/models/message_container.dart';
+import 'package:intl/intl.dart';
 
 class AuthResult {
   bool verified;
@@ -16,6 +17,7 @@ class AuthResult {
   List<Duration> processingTimes = [];
   List<Duration> hashingTimes = [];
   List<Duration> verificationTimes = [];
+  List<Duration> rxTimes = [];
 
   AuthResult({required this.verified, required this.verificationMessage});
 }
@@ -25,19 +27,20 @@ class Authenticator {
   static List<Duration> processingTimes = [];
   static List<Duration> hashingTimes = [];
   static List<Duration> verificationTimes = [];
+  static List<Duration> rxTimes = [];
 
-  static double calculateAverage(List<Duration> durations) {
-    if (durations.isEmpty) {
-      return 0;
-    }
-    int dl = durations.length;
-    int sum = 0;
-    durations.forEach((element) {
-      sum = sum + element.inMicroseconds;
-    });
-    log("Dividing: ${sum} / $dl");
-    return (sum) / dl;
-  }
+  // static double calculateAverage(List<Duration> durations) {
+  //   if (durations.isEmpty) {
+  //     return 0;
+  //   }
+  //   var dl = durations.length;
+  //   var sum = 0;
+  //   durations.forEach((element) {
+  //     sum = sum + element.inMicroseconds;
+  //   });
+  //   log("Dividing: $sum / $dl");
+  //   return (sum) / dl;
+  // }
 
   static String stringToHex(String text, int length) {
     var hexString = text.runes
@@ -69,15 +72,83 @@ class Authenticator {
     return digest.toString();
   }
 
-  static AuthResult checkAuth(List<MessageContainer> allMessages) {
-    if (trials > 20) {
-      var averageProcessingTime = calculateAverage(processingTimes);
-      var averageHashingTime = calculateAverage(hashingTimes);
-      var averageVerificationTime = calculateAverage(verificationTimes);
+  static DateTime parseTime(String inputTimeString) {
+    var now = DateTime.now();
 
-      log('Average Processing Time: $averageProcessingTime');
-      log('Average Hashing Time: $averageHashingTime');
-      log('Average Verification Time: $averageVerificationTime');
+    // Split the input time string by spaces
+    var parts = inputTimeString.split(' ');
+
+    // Extract the year, time and microsecond parts
+    var year = int.parse(parts[0]);
+    var timePart = parts[1];
+
+    // Split the time part by colons
+    var timeParts = timePart.split(':');
+
+    // Extract the hour, minute, second, and microsecond parts
+    var hour = int.parse(timeParts[0]);
+    var minute = int.parse(timeParts[1]);
+    var second = int.parse(timeParts[2].split('.')[0]); // Extract seconds
+    var totalMicrosecond =
+        int.parse(timeParts[2].split('.')[1]); // Extract microseconds
+
+    var milliseconds =
+        totalMicrosecond ~/ 1000; // Integer division to get milliseconds
+    var microseconds = totalMicrosecond % 1000; // Remainder to get microseconds
+
+    // Create a new DateTime object with the extracted values
+    var parsedDateTime = DateTime(year, now.month, now.day, hour, minute,
+        second, milliseconds, microseconds);
+
+    return parsedDateTime;
+  }
+
+  static AuthResult checkAuth(List<MessageContainer> allMessages) {
+    // if (trials > 20) {
+    //   var averageProcessingTime = calculateAverage(processingTimes);
+    //   var averageHashingTime = calculateAverage(hashingTimes);
+    //   var averageVerificationTime = calculateAverage(verificationTimes);
+    //   var averageRxTime = calculateAverage(rxTimes);
+
+    //   log('Average Processing Time: $averageProcessingTime');
+    //   log('Average Hashing Time: $averageHashingTime');
+    //   log('Average Verification Time: $averageVerificationTime');
+    //   log('Average Rx Time: $averageRxTime');
+    // }
+
+    if (allMessages.last.selfIdMessage != null) {
+      if (allMessages.last.selfIdMessage!.description != "") {
+        // DateTime now = DateTime.now();
+
+        var txTime =
+            parseTime(allMessages.last.selfIdMessage!.description.toString());
+
+        log("TS: INTERMID: y:${txTime.year}, hour:${txTime.hour}, minute:${txTime.minute}, second:${txTime.second}, microsec:${txTime.microsecond}");
+
+        var formattedTxDateTime =
+            DateFormat('yyyy HH:mm:ss.SSSSSS').format(txTime);
+
+        var formattedRxDateTime = DateFormat('yyyy HH:mm:ss.SSSSSS')
+            .format(allMessages.last.lastUpdate);
+
+        // log("TS: Input: ${allMessages.last.selfIdMessage!.description.toString()}");
+        // log("TS: Input Parsed: $formattedTxDateTime");
+        Duration td = allMessages.last.lastUpdate.difference(txTime);
+        // Duration tn = now.difference(txTime);
+
+        log("TS: Tx Time: $formattedTxDateTime");
+        log("TS: Rx Time: $formattedRxDateTime");
+        log("TS: Time Rx Δ: ${td.inMilliseconds} ms == ${td.inMicroseconds} μs");
+        // log("TS: Time Now Δ: ${tn.inMilliseconds} ms == ${tn.inMicroseconds} μs");
+
+        rxTimes.add(td);
+
+        log("TS: ------------------------");
+      } else {
+        log("TS: No TimeStamp");
+      }
+    } else {
+      log("NTS: o TimeStamp");
     }
 
     Duration? pt;
@@ -117,7 +188,7 @@ class Authenticator {
       var lengthOfHex = 49;
       operatorID = stringToHex(
           allMessages.last.operatorIdMessage!.operatorID, lengthOfHex);
-      operatorID += "1000100"; // Terminating chars from cpp
+      operatorID += "1000000"; // Terminating chars from cpp
 
       var t1 = DateTime.now();
 
@@ -129,27 +200,29 @@ class Authenticator {
 
       // log("MADATR: Got Data");
 
-      // log("MADATR: pubKeyHex UA: DD0876EA58CD10AFAA466E60FCD77DEB813F172A038197DEC59FDA98F504A036C06FF635FC4E7B620D3D58BC671152C684B025817D9BBA2C971F8C1997F33E53");
+      // log("MADATR: pubKeyHex UA: E05C48713D1FB3F0F02AD459516CB701A1AABC0960C8CA620B821805C59887B525AF1869DB9A4716B6AED257792C3554645DD769A76026EF62BC6C5194F95DEE");
       // log("MADATR: pubKeyHex Rx: ${pubKeyHex.toUpperCase()}");
       // log("-------");
 
       // log("MADATR: message UA: 4B552D55412D31323233343100000000000000000000000001000100");
       // log("MADATR: message Rx: ${operatorID.toUpperCase()}");
       // log("--");
-      // log("MADATR: message Hash UA: 0AE4EA8F87B8082E69FA545BAC7A8FC55E3E8589FCDC20BD16BE2FB359BEC5B5");
+      // log("MADATR: message Hash UA: CF2BDCDBC1A82C742880F53607D495CABA9081C013F13F61D46BE716BBEE5A48");
       // log("MADATR: message Hash Rx: ${hashHex.toUpperCase()}");
       // log("--");
 
-      // log("MADATR: sigHashHex UA: 400AC0C73ED08F82FF8458773F4C4796AF886E55A7FDB9B021CDF2081AA70E4936164E6DCBE122F70CF4F0C8513203B9DE4FED8FE6C58205C0874F9F84FE7461");
+      // log("MADATR: sigHashHex UA: F9E1A5558E0E201DEC05AA952FC17BB748F06646E3548813BD84A77049EBACC53FE38AA912D3C4C267C99136DAAA0CE0BBB4AFB9D4E244068F39E4DFA518F1FA");
       // log("MADATR: sigHashHex Rx: ${sigHex.toUpperCase()}");
       // log("-------");
       // log("----------------------------");
 
-      // log("MADATR: operatorID: ${operatorID.toUpperCase()}");
+      // log("MADATR: operatorID UA: 4B555F55544D5F55415F333438353337383300000000000001000000");
+      // log("MADATR: operatorID Rx: ${operatorID.toUpperCase()}");
 
       t1 = DateTime.now();
 
       var ec = getP256();
+
       pubKeyHex = "04$pubKeyHex";
 
       PublicKey pubKey;
@@ -203,6 +276,7 @@ class Authenticator {
           result.hashingTimes = hashingTimes;
           result.processingTimes = processingTimes;
           result.verificationTimes = verificationTimes;
+          result.rxTimes = rxTimes;
         }
 
         return result;

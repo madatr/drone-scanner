@@ -12,14 +12,15 @@ class AircraftDetailField extends StatelessWidget {
   final String? fieldText;
   final Widget? child;
   final String? tooltipMessage;
+  final String? numOfMes;
 
-  const AircraftDetailField({
-    super.key,
-    required this.headlineText,
-    this.fieldText,
-    this.child,
-    this.tooltipMessage,
-  });
+  const AircraftDetailField(
+      {super.key,
+      required this.headlineText,
+      this.fieldText,
+      this.child,
+      this.tooltipMessage,
+      this.numOfMes});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +39,16 @@ class AircraftDetailField extends StatelessWidget {
                 color: AppColors.detailFieldHeaderColor,
               ),
             ),
+            numOfMes != null
+                ? Text(
+                    numOfMes.toString(),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.normal,
+                      color: Color.fromARGB(255, 145, 151, 152),
+                    ),
+                  )
+                : Container(),
             if (tooltipMessage != null)
               CustomTooltip(
                 message: tooltipMessage!,
