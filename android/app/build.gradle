@@ -47,7 +47,7 @@ android {
 
    
     defaultConfig {
-        applicationId "cz.dronetag.dronescanner"
+        applicationId "ku.utm.dronescanner"
         compileSdk 34
         minSdkVersion 23
         targetSdkVersion 33

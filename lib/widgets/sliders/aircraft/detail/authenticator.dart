@@ -13,6 +13,10 @@ class AuthResult {
   bool verified;
   String verificationMessage;
 
+  List<Duration> processingTimes = [];
+  List<Duration> hashingTimes = [];
+  List<Duration> verificationTimes = [];
+
   AuthResult({required this.verified, required this.verificationMessage});
 }
 
@@ -195,6 +199,10 @@ class Authenticator {
           hashingTimes.add(ht);
           processingTimes.add(pt!);
           verificationTimes.add((vt));
+
+          result.hashingTimes = hashingTimes;
+          result.processingTimes = processingTimes;
+          result.verificationTimes = verificationTimes;
         }
 
         return result;

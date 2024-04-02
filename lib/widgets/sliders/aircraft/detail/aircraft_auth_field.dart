@@ -10,11 +10,34 @@ import 'aircraft_detail_row.dart';
 import 'authenticator.dart';
 
 class AuthFields {
+  static double calculateAverage(List<Duration> durations) {
+    if (durations.isEmpty) {
+      return 0;
+    }
+    int dl = durations.length;
+    int sum = 0;
+    durations.forEach((element) {
+      sum = sum + element.inMicroseconds;
+    });
+    log("Dividing: ${sum} / $dl");
+    return (sum) / dl;
+  }
+
   static List<Widget> buildAuthFields(
     BuildContext context,
     List<MessageContainer> messagePackList,
   ) {
     var result = Authenticator.checkAuth(messagePackList);
+    var averageProcessingTime = 0.0;
+    var averageHashingTime = 0.0;
+    var averageVerificationTime = 0.0;
+
+    if (result.hashingTimes.length > 10) {
+      averageProcessingTime = calculateAverage(result.processingTimes);
+      averageHashingTime = calculateAverage(result.hashingTimes);
+      averageVerificationTime = calculateAverage(result.verificationTimes);
+    }
+
     log("MADATR T: Verification result: ${result.verificationMessage}");
 
     final isLandscape =
@@ -69,6 +92,71 @@ class AuthFields {
           ),
         ],
       ),
+      // AircraftDetailField(
+      //   headlineText: 'Verification Timings',
+      //   child: Row(
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       Text(
+      //         "Messages Received: ${result.hashingTimes.length}",
+      //         style: const TextStyle(
+      //           color: AppColors.detailFieldColor,
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      // ),
+      result.hashingTimes.length > 10
+          ? AircraftDetailField(
+              headlineText: 'Average Processing Time',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${averageProcessingTime.toStringAsFixed(0)} μs  ≈  ${(averageProcessingTime / 1000).toStringAsFixed(0)} ms",
+                    style: const TextStyle(
+                      color: AppColors.detailFieldColor,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(),
+      result.hashingTimes.length > 10
+          ? AircraftDetailField(
+              headlineText: 'Average Hashing Time',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${averageHashingTime.toStringAsFixed(0)} μs  ≈  ${(averageHashingTime / 1000).toStringAsFixed(0)} ms",
+                    style: const TextStyle(
+                      color: AppColors.detailFieldColor,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(),
+      result.hashingTimes.length > 10
+          ? AircraftDetailField(
+              headlineText: 'Average Verification Time',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${averageVerificationTime.toStringAsFixed(0)} μs  ≈  ${(averageVerificationTime / 1000).toStringAsFixed(0)} ms",
+                    style: const TextStyle(
+                      color: AppColors.detailFieldColor,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(),
     ];
   }
 }
