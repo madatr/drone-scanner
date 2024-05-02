@@ -189,7 +189,11 @@ class Authenticator {
               .toHexString();
           // log("MADATR: payload: ${payload}");
 
-          if (payload.isNotEmpty || payload.length == 256) {
+          // log("PayloadLength: Payload data: $payload");
+          log("payloadLength: ${payload.length}");
+          log("payloadLength Non zero: ${payload.replaceAll(RegExp(r'0+$'), '').length}");
+
+          if (payload.replaceAll(RegExp(r'0+$'), '').length == 256) {
             pubKeyHex = payload.substring(0, 128);
             sigHex = payload.substring(128, 256);
           } else {
@@ -201,7 +205,7 @@ class Authenticator {
           var lengthOfHex = 49;
           operatorID = stringToHex(
               allMessages.last.operatorIdMessage!.operatorID, lengthOfHex);
-          operatorID += "1000000"; // Terminating chars from cpp
+          operatorID += "1000001"; // Terminating chars from cpp
 
           var t1 = DateTime.now();
 
@@ -229,7 +233,7 @@ class Authenticator {
           // log("-------");
           // log("----------------------------");
 
-          // log("MADATR: operatorID UA: 4B555F55544D5F55415F333438353337383300000000000001000000");
+          // log("MADATR: operatorID UA: 4B555F55544D5F55415F333438353337383300000000000001000001");
           // log("MADATR: operatorID Rx: ${operatorID.toUpperCase()}");
 
           t1 = DateTime.now();
@@ -282,7 +286,7 @@ class Authenticator {
             log("Verification time: ${vt.inMicroseconds} μs");
 
             log(vres ? "Verified" : "Not verified");
-            result.verified = true;
+            result.verified = vres;
             result.verificationMessage = "-";
 
             if (vres) {

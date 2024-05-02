@@ -87,7 +87,9 @@ class AuthFields {
                 children: [
                   Text(
                     result.verified
-                        ? result.authAlgorithm!
+                        ? (result.authAlgorithm != null
+                            ? result.authAlgorithm!
+                            : "UNKNOWN")
                         : result.verificationMessage,
                     softWrap: true,
                     style: const TextStyle(
