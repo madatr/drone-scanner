@@ -40,7 +40,6 @@ T? parseODIDMessage<T extends ODIDMessage>(Uint8List messageData) {
   if (messageType != MessagePack && messageData.length != maxMessageSize) {
     return null;
   }
-  // i++;
 
   final parser = _parserMapping[messageType];
 
@@ -51,26 +50,16 @@ T? parseODIDMessage<T extends ODIDMessage>(Uint8List messageData) {
   var out;
 
   if (messageType == AuthMessage) {
-    // authDataCombined ??= Uint8List.fromList([]);
-
     out = parser.parse(messageData) as AuthMessage?;
 
     if (out != null) {
       try {
-        // log("MADATR: Internal: Page(${out!.authPageNumber})| data: ${out!.authData.toString()}");
-
         if (out!.authPageNumber == 0) {
-          // log("Got auth message (0): ${DateTime.now().toIso8601String()}");
-
-          // log("MADATR: Internal: Page 0 - clearing");
-
           authDataCombined.clear();
           authDataCombined.addAll(out!.authData.authData.toList());
         } else {
           authDataCombined.addAll(out!.authData.authData.toList());
         }
-        // log("MADATR: Internal: data: ${out!.authData.toString()}");
-        // log("MADATR: Internal: combined: ${authDataCombined.toString()}");
         var authData_ =
             AuthData(authData: Uint8List.fromList(authDataCombined));
         var authMes = AuthMessage(
@@ -84,11 +73,9 @@ T? parseODIDMessage<T extends ODIDMessage>(Uint8List messageData) {
             authData: authData_);
         out = authMes;
       } catch (e) {
-        log("MADATR: ERR: ${e.toString()}");
+        log("ERR: ${e.toString()}");
       }
     }
-    // log("MADATR: Internal: Auth page (page number: $pageNumber) Data: ${authData}");
-    // log("MADATR: Internal: Auth data combined ${authDataCombined}");
   } else {
     out = parser.parse(messageData) as T?;
   }

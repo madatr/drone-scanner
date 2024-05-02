@@ -2,6 +2,10 @@ sealed class DescriptionType {
   final int value;
 
   const DescriptionType({required this.value});
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
+  }
 }
 
 class DescriptionTypeText extends DescriptionType {

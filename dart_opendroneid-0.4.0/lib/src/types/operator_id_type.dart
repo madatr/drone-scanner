@@ -2,6 +2,10 @@ sealed class OperatorIDType {
   final int value;
 
   const OperatorIDType({required this.value});
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
+  }
 }
 
 // TODO better naming??

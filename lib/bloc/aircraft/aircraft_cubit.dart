@@ -75,6 +75,7 @@ class AircraftCubit extends Cubit<AircraftState> {
         description: 'This is very secret operation!',
         descriptionType: const DescriptionTypeText(),
       ),
+      rxTime: DateTime.now(),
     ),
   ];
 

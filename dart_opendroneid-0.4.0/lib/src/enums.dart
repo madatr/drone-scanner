@@ -37,6 +37,10 @@ enum MessageType {
         return MessagePack;
     }
   }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
+  }
 }
 
 enum IDType {
@@ -52,6 +56,10 @@ enum IDType {
 
   static IDType? getByValue(int value) {
     return IDType.values.firstWhereOrNull((type) => type.value == value);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
   }
 }
 
@@ -80,6 +88,10 @@ enum UAType {
   static UAType? getByValue(int value) {
     return UAType.values.firstWhereOrNull((type) => type.value == value);
   }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
+  }
 }
 
 enum OperationalStatus {
@@ -96,6 +108,10 @@ enum OperationalStatus {
   static OperationalStatus? getByValue(int value) {
     return OperationalStatus.values
         .firstWhereOrNull((type) => type.value == value);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
   }
 }
 
@@ -122,6 +138,10 @@ enum HorizontalAccuracy {
     return HorizontalAccuracy.values
         .firstWhereOrNull((type) => type.value == value);
   }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
+  }
 }
 
 enum VerticalAccuracy {
@@ -140,6 +160,10 @@ enum VerticalAccuracy {
   static VerticalAccuracy? getByValue(int value) {
     return VerticalAccuracy.values
         .firstWhereOrNull((type) => type.value == value);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
   }
 }
 
@@ -160,6 +184,10 @@ enum SpeedAccuracy {
   static SpeedAccuracy? getByValue(int value) {
     return SpeedAccuracy.values.firstWhereOrNull((type) => type.value == value);
   }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
+  }
 }
 
 enum HeightType {
@@ -172,6 +200,10 @@ enum HeightType {
 
   static HeightType? getByValue(int value) {
     return HeightType.values.firstWhereOrNull((type) => type.value == value);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
   }
 }
 
@@ -186,6 +218,10 @@ enum ClassificationType {
   static ClassificationType? getByValue(int value) {
     return ClassificationType.values
         .firstWhereOrNull((type) => type.value == value);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
   }
 }
 
@@ -202,6 +238,10 @@ enum UACategoryEurope {
   static UACategoryEurope? getByValue(int value) {
     return UACategoryEurope.values
         .firstWhereOrNull((type) => type.value == value);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
   }
 }
 
@@ -222,6 +262,10 @@ enum UAClassEurope {
   static UAClassEurope? getByValue(int value) {
     return UAClassEurope.values.firstWhereOrNull((type) => type.value == value);
   }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
+  }
 }
 
 enum OperatorLocationType {
@@ -236,6 +280,10 @@ enum OperatorLocationType {
   static OperatorLocationType? getByValue(int value) {
     return OperatorLocationType.values
         .firstWhereOrNull((type) => type.value == value);
+  }
+
+  Map<String, int> toJson() {
+    return {'value': value};
   }
 }
 
@@ -259,5 +307,9 @@ enum AuthType {
 
   static AuthType? getByValue(int value) {
     return AuthType.values.firstWhereOrNull((type) => type.value == value);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
   }
 }

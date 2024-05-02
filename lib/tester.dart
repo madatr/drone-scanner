@@ -1,9 +1,8 @@
 import 'dart:developer';
 
-import 'package:flutter/material.dart';
 import 'package:ecdsa/ecdsa.dart';
 import 'package:elliptic/elliptic.dart';
-import 'package:elliptic/ecdh.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());

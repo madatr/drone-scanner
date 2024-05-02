@@ -34,6 +34,15 @@ class BasicIDMessage extends ODIDMessage {
     required this.uaType,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'protocolVersion': protocolVersion,
+      'rawContent': rawContent,
+      'uasID': uasID.toJson(),
+      'uaType': uaType.toString(),
+    };
+  }
+
   @override
   String toString() => 'BasicIDMessage {'
       'UAS ID: $uasID'
@@ -49,6 +58,13 @@ class Location {
     required this.latitude,
     required this.longitude,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+  }
 
   @override
   String toString() => 'Location {'
@@ -136,6 +152,28 @@ class LocationMessage extends ODIDMessage {
       'Timestamp: $timestamp, '
       'Timestamp Accuracy: $timestampAccuracy s'
       '}';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'protocolVersion': protocolVersion,
+      'rawContent': rawContent,
+      'status': status.toJson(),
+      'heightType': heightType.toJson(),
+      'direction': direction,
+      'horizontalSpeed': horizontalSpeed,
+      'verticalSpeed': verticalSpeed,
+      'location': location?.toJson(),
+      'altitudePressure': altitudePressure,
+      'altitudeGeodetic': altitudeGeodetic,
+      'height': height,
+      'verticalAccuracy': verticalAccuracy.toJson(),
+      'horizontalAccuracy': horizontalAccuracy.toJson(),
+      'baroAltitudeAccuracy': baroAltitudeAccuracy.toJson(),
+      'speedAccuracy': speedAccuracy.toJson(),
+      'timestamp': timestamp?.inMilliseconds,
+      'timestampAccuracy': timestampAccuracy?.inMilliseconds,
+    };
+  }
 }
 
 class OperatorIDMessage extends ODIDMessage {
@@ -154,6 +192,15 @@ class OperatorIDMessage extends ODIDMessage {
       'Operator ID Type: $operatorIDType,'
       'Operator ID: $operatorID'
       '}';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'protocolVersion': protocolVersion,
+      'rawContent': rawContent,
+      'operatorIDType': operatorIDType.toJson(),
+      'operatorID': operatorID,
+    };
+  }
 }
 
 class SelfIDMessage extends ODIDMessage {
@@ -172,6 +219,15 @@ class SelfIDMessage extends ODIDMessage {
       'Description Type: $descriptionType, '
       'Description: $description'
       '}';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'protocolVersion': protocolVersion,
+      'rawContent': rawContent,
+      'descriptionType': descriptionType.toJson(),
+      'description': description,
+    };
+  }
 }
 
 class SystemMessage extends ODIDMessage {
@@ -215,6 +271,22 @@ class SystemMessage extends ODIDMessage {
       'UA Classification: $uaClassification, '
       'Timestamp: $timestamp'
       '}';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'protocolVersion': protocolVersion,
+      'rawContent': rawContent,
+      'operatorLocationType': operatorLocationType.toJson(),
+      'operatorLocation': operatorLocation?.toJson(),
+      'operatorAltitude': operatorAltitude,
+      'areaCount': areaCount,
+      'areaRadius': areaRadius,
+      'areaCeiling': areaCeiling,
+      'areaFloor': areaFloor,
+      'uaClassification': uaClassification.toJson(),
+      'timestamp': timestamp.toIso8601String(),
+    };
+  }
 }
 
 /// The [AuthMessage] can have two different formats:
@@ -260,6 +332,19 @@ class AuthMessage extends ODIDMessage {
       'Auth Data: $authData, '
       'Timestamp: $timestamp'
       '}';
+
+  Map<String, dynamic> toJson() {
+    return {
+      'protocolVersion': protocolVersion,
+      'rawContent': rawContent,
+      'authType': authType.toJson(),
+      'authPageNumber': authPageNumber,
+      'lastAuthPageIndex': lastAuthPageIndex,
+      'authLength': authLength,
+      'timestamp': timestamp?.toIso8601String(),
+      'authData': authData.toJson(),
+    };
+  }
 }
 
 class MessagePack extends ODIDMessage {

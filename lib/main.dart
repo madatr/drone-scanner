@@ -11,6 +11,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'bloc/aircraft/aircraft_cubit.dart';
 import 'bloc/aircraft/aircraft_expiration_cubit.dart';
 import 'bloc/aircraft/export_cubit.dart';
+import 'bloc/aircraft/exporter_cubit.dart';
 import 'bloc/aircraft/selected_aircraft_cubit.dart';
 import 'bloc/geocoding_cubit.dart';
 import 'bloc/help/help_cubit.dart';
@@ -77,6 +78,7 @@ void main() async {
       ornithologyRestClient: OrnithologyRestClient());
   final proximityAlertsCubit =
       ProximityAlertsCubit(notificationService, aircraftCubit);
+  final exporterCubit = ExporterCubit(aircraftCubit: aircraftCubit);
   final sheetLicense = await rootBundle.loadString('assets/docs/SHEET-LICENSE');
   LicenseRegistry.addLicense(() => Stream<LicenseEntry>.value(
         LicenseEntryWithLineBreaks(
@@ -139,12 +141,14 @@ void main() async {
         ),
         BlocProvider<OpendroneIdCubit>(
           create: (context) => OpendroneIdCubit(
-            mapCubit: mapCubit,
-            selectedAircraftCubit: selectedCubit,
-            aircraftCubit: aircraftCubit,
-          ),
+              mapCubit: mapCubit,
+              selectedAircraftCubit: selectedCubit,
+              aircraftCubit: aircraftCubit,
+              exporterCubit: exporterCubit),
           lazy: false,
         ),
+        BlocProvider<ExporterCubit>(
+            create: (context) => exporterCubit, lazy: false),
         BlocProvider<HelpCubit>(
           create: (context) => HelpCubit(),
           lazy: false,

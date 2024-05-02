@@ -1,12 +1,18 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../../bloc/aircraft/exporter_cubit.dart';
 import '../../bloc/showcase_cubit.dart';
 import '../../constants/colors.dart' as colors;
+import '../../constants/colors.dart';
 import '../../constants/sizes.dart';
+import '../app/dialogs.dart';
 import '../showcase/showcase_item.dart';
 import './components/toolbar_actions.dart';
-import 'components/location_search.dart';
+// import 'components/location_search.dart';
 import 'components/scanning_state_icons.dart';
 
 class Toolbar extends StatefulWidget {
@@ -19,6 +25,9 @@ class Toolbar extends StatefulWidget {
 }
 
 class _ToolbarState extends State<Toolbar> {
+  bool wakelock = false;
+  bool logging = false;
+
   @override
   Widget build(BuildContext context) {
     final statusBarHeight = MediaQuery.of(context).viewPadding.top;
@@ -51,10 +60,12 @@ class _ToolbarState extends State<Toolbar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            const Expanded(
-              flex: 2,
-              child: LocationSearch(),
-            ),
+            // const Expanded(
+            //   flex: 2,
+            //   child: LocationSearch(),
+            // ),
+
+            Expanded(child: Container()),
             Expanded(
               flex: 1,
               child: ShowcaseItem(
@@ -64,6 +75,103 @@ class _ToolbarState extends State<Toolbar> {
                 title: 'Map Toolbar',
                 child: const ScanningStateIcons(),
               ),
+            ),
+            RawMaterialButton(
+              onPressed: () {
+                setState(() {
+                  wakelock = !wakelock;
+                  showSnackBar(
+                    context,
+                    "Screen Lock ${wakelock ? "Enabled." : "Disabled."}",
+                  );
+                  WakelockPlus.toggle(enable: wakelock);
+                });
+              },
+              constraints: const BoxConstraints(),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: const CircleBorder(),
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Icon(
+                    Icons.phonelink_lock,
+                    color:
+                        wakelock ? Colors.white : AppColors.iconDisabledColor,
+                    size: Sizes.iconSize,
+                  ),
+                  if (!wakelock)
+                    Transform.rotate(
+                      angle: -math.pi / 4,
+                      child: Container(
+                        width: Sizes.iconSize / 8,
+                        height: Sizes.iconSize + 3,
+                        color: Colors.white,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            RawMaterialButton(
+              onPressed: () async {
+                if (logging) {
+                  var res = await context.read<ExporterCubit>().stopLogger();
+                  if (mounted) {
+                    if (res is bool && res) {
+                      logging = false;
+                      showSnackBar(
+                        context,
+                        "Logging Stopped.",
+                      );
+                    } else {
+                      var e = res as Exception;
+                      showSnackBar(
+                        context,
+                        "Logging Stop Error: ${e.toString()}",
+                      );
+                    }
+                  }
+                } else {
+                  var res = await context.read<ExporterCubit>().startLogger();
+                  if (mounted) {
+                    if (res is bool && res) {
+                      logging = true;
+                      showSnackBar(
+                        context,
+                        "Logging Started.",
+                      );
+                    } else {
+                      var e = res as Exception;
+
+                      showSnackBar(
+                        context,
+                        "Logging Start Error: ${e.toString()}",
+                      );
+                    }
+                  }
+                }
+                setState(() {});
+              },
+              constraints: const BoxConstraints(),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: const CircleBorder(),
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Icon(
+                    logging
+                        ? Icons.stop_circle_rounded
+                        : Icons.radio_button_checked_rounded,
+                    color: Colors.red,
+                    size: Sizes.iconSize,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              width: 20,
             ),
             ShowcaseItem(
               showcaseKey: context.read<ShowcaseCubit>().showInfoKey,

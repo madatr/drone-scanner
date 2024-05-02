@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/snackbar_messages.dart';
 import 'aircraft/aircraft_cubit.dart';
+import 'aircraft/exporter_cubit.dart';
 import 'aircraft/selected_aircraft_cubit.dart';
 import 'map/map_cubit.dart';
 
@@ -53,6 +54,8 @@ class OpendroneIdCubit extends Cubit<ScanningState> {
   MapCubit mapCubit;
   SelectedAircraftCubit selectedAircraftCubit;
   AircraftCubit aircraftCubit;
+  ExporterCubit exporterCubit;
+  int messageCallbackCount = 0;
 
   static const messageDebounceMs = 50;
 
@@ -60,6 +63,7 @@ class OpendroneIdCubit extends Cubit<ScanningState> {
     required this.mapCubit,
     required this.selectedAircraftCubit,
     required this.aircraftCubit,
+    required this.exporterCubit,
   }) : super(
           ScanningState(
             isScanningBluetooth: false,
@@ -133,7 +137,12 @@ class OpendroneIdCubit extends Cubit<ScanningState> {
       // log("Madatr: External: apagenum: ${pack.authenticationMessage!.authPageNumber}");
       // log("Madatr: External: fmessage: ${pack.authenticationMessage!.authData.toString()}");
     }
+
+    //TODO: ADD HERE
     aircraftCubit.addPack(pack);
+    exporterCubit.newPack(pack, messageCallbackCount);
+    messageCallbackCount++;
+
     if (mapCubit.state.lockOnPoint &&
         pack.macAddress == selectedAircraftCubit.state.selectedAircraftMac &&
         pack.locationValid) {

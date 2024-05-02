@@ -1,15 +1,30 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import '../enums.dart';
 
-sealed class UASID {
+abstract class UASID {
   final IDType type;
 
   const UASID(this.type);
+
+  Map<String, dynamic> toJson();
+
+  String? map(
+      {required Null Function(dynamic _) none,
+      required Function(dynamic serialNumber) serialNumber,
+      required Function(dynamic registrationID) CAARegistrationID,
+      required Function(dynamic id) UTMAssignedID,
+      required Function(dynamic id) specificSessionID}) {}
 }
 
 class IDNone extends UASID {
   const IDNone() : super(IDType.none);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type': 'none'};
+  }
 
   @override
   String toString() {
@@ -25,6 +40,11 @@ class SerialNumber extends UASID {
   }) : super(IDType.serialNumber);
 
   @override
+  Map<String, dynamic> toJson() {
+    return {'type': 'serialNumber', 'serialNumber': serialNumber};
+  }
+
+  @override
   String toString() {
     return 'SerialNumber{serialNumber: $serialNumber}';
   }
@@ -36,6 +56,11 @@ class CAARegistrationID extends UASID {
   const CAARegistrationID({
     required this.registrationID,
   }) : super(IDType.CAARegistrationID);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type': 'CAARegistrationID', 'registrationID': registrationID};
+  }
 
   @override
   String toString() {
@@ -53,6 +78,11 @@ class UTMAssignedID extends UASID {
   }) : super(IDType.UTMAssignedID);
 
   @override
+  Map<String, dynamic> toJson() {
+    return {'type': 'UTMAssignedID', 'id': base64Encode(id)};
+  }
+
+  @override
   String toString() {
     return 'UTMAssignedID{id: $id}';
   }
@@ -65,6 +95,11 @@ class SpecificSessionID extends UASID {
   const SpecificSessionID({
     required this.id,
   }) : super(IDType.specificSessionID);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {'type': 'specificSessionID', 'id': base64Encode(id)};
+  }
 
   @override
   String toString() {

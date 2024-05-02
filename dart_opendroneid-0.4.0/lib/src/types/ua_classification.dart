@@ -4,6 +4,10 @@ sealed class UAClassification {
   final int value;
 
   const UAClassification({required this.value});
+
+  Map<String, dynamic> toJson() {
+    return {'value': value};
+  }
 }
 
 class UAClassificationUndeclared extends UAClassification {

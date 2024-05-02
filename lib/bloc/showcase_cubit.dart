@@ -30,6 +30,7 @@ class ShowcaseCubit extends Cubit<ShowcaseState> {
   final GlobalKey permissionsKey = GlobalKey();
   final GlobalKey cleaningPacksKey = GlobalKey();
   final GlobalKey lastKey = GlobalKey();
+  // final GlobalKey wakelockKey = GlobalKey();
 
   final String rootDescription =
       'A quick tutorial will guide you through the features of this '
@@ -79,6 +80,7 @@ class ShowcaseCubit extends Cubit<ShowcaseState> {
       mapKey,
       searchKey,
       scanningStateKey,
+      // wakelockKey,
       showInfoKey,
       mapToolbarKey,
       droneRadarKey,

@@ -71,13 +71,15 @@ class AircraftCard extends StatelessWidget {
           givenLabel: givenLabel,
         ),
         const SizedBox(width: 5),
-        Icon(
-          result.verified
-              ? Icons.check_circle_outline_rounded
-              : Icons.error_outline_rounded,
-          color: result.verified ? Colors.green : Colors.red,
-          size: 17,
-        )
+        result != null
+            ? Icon(
+                result.verified
+                    ? Icons.check_circle_outline_rounded
+                    : Icons.error_outline_rounded,
+                color: result.verified ? Colors.green : Colors.red,
+                size: 17,
+              )
+            : Container()
       ]),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

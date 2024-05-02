@@ -13,4 +13,8 @@ class AuthData {
 
   String _byteHexString(int byte) =>
       '0x${byte.toRadixString(16).toUpperCase().padLeft(2, '0')}';
+
+  Map<String, dynamic> toJson() {
+    return {'authData': toHexString()};
+  }
 }
